@@ -17,7 +17,7 @@ jobs:
           lfs: true
 
       - name: Build image
-        run: docker build . --file Dockerfile --tag latest
+        run: docker build . --file Dockerfile --tag vaxalert:latest
 
       - name: Log into registry
         run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_SERVER }} -u ${{ secrets.ACR_USERNAME }} --password-stdin
