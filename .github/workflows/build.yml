@@ -1,0 +1,30 @@
+name: Build and Push
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - name: Build image
+        run: docker build . --file Dockerfile --tag latest
+
+      - name: Log into registry
+        run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_SERVER }} -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=${{ secrets.ACR_SERVER }}/vaxalert
+
+          docker tag vaxalert $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
